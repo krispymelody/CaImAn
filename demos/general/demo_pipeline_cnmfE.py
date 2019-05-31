@@ -13,6 +13,8 @@ You can also run a large part of the pipeline with a single method
 (cnmf.fit_file) See inside for details.
 
 Demo is also available as a jupyter notebook (see demo_pipeline_cnmfE.ipynb)
+
+This version is forked by Kris Pan.
 """
 
 import logging
