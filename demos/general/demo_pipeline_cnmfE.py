@@ -47,6 +47,9 @@ logging.basicConfig(format=
                     level=logging.DEBUG)
     # filename="/tmp/caiman.log"
 
+# marker
+show_chart = False
+
 #%%
 def main():
     pass # For compatibility between running under Spyder and the CLI
@@ -109,12 +112,14 @@ def main():
             bord_px = np.ceil(np.maximum(np.max(np.abs(mc.x_shifts_els)),
                                          np.max(np.abs(mc.y_shifts_els)))).astype(np.int)
         else:
-            bord_px = np.ceil(np.max(np.abs(mc.shifts_rig))).astype(np.int)
-            plt.subplot(1, 2, 1); plt.imshow(mc.total_template_rig)  # % plot template
-            plt.subplot(1, 2, 2); plt.plot(mc.shifts_rig)  # % plot rigid shifts
-            plt.legend(['x shifts', 'y shifts'])
-            plt.xlabel('frames')
-            plt.ylabel('pixels')
+            # marker
+            if show_chart:
+                bord_px = np.ceil(np.max(np.abs(mc.shifts_rig))).astype(np.int)
+                plt.subplot(1, 2, 1); plt.imshow(mc.total_template_rig)  # % plot template
+                plt.subplot(1, 2, 2); plt.plot(mc.shifts_rig)  # % plot rigid shifts
+                plt.legend(['x shifts', 'y shifts'])
+                plt.xlabel('frames')
+                plt.ylabel('pixels')
 
         bord_px = 0 if border_nan is 'copy' else bord_px
         fname_new = cm.save_memmap(fname_mc, base_name='memmap_', order='C',

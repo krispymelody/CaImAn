@@ -588,6 +588,8 @@ class CNMF(object):
                             self.estimates.YrA = np.concatenate([self.estimates.YrA[not_merged],
                                                        np.array([self.estimates.YrA[m].mean(0) for ind, m in enumerate(self.estimates.merged_ROIs) if not self.empty_merged[ind]])])
                     if self.params.get('init', 'nb') == 0:
+                        # marker
+                        print('Computing W')
                         self.estimates.W, self.estimates.b0 = compute_W(
                             Yr, self.estimates.A.toarray(), self.estimates.C, self.dims,
                             self.params.get('init', 'ring_size_factor') *

@@ -46,6 +46,8 @@ try:
 except:
     pass
 
+
+
 def resize(Y, size, interpolation=cv2.INTER_LINEAR):
     """faster and 3D compatible version of skimage.transform.resize"""
     if Y.ndim == 2:
@@ -1583,14 +1585,19 @@ def compute_W(Y, A, C, dims, radius, data_fits_in_memory=True, ssub=1, tsub=1):
         b0: np.ndarray (pixels,)
             estimate of constant background baselines
     """
-
+    
     d1 = (dims[0] - 1) // ssub + 1
     d2 = (dims[1] - 1) // ssub + 1
 
     radius = int(round(radius / float(ssub)))
     ring = disk(radius + 1)
     ring[1:-1, 1:-1] -= disk(radius)
+    # marker
+    print("ring is: {0}".format(ring))
+    print("ring size is: {0}".format(ring.shape))
     ringidx = [i - radius - 1 for i in np.nonzero(ring)]
+    print("ringidx is: {0}".format(ringidx))
+    print("ring size is: {0}".format(ringidx.shape))
 
     def get_indices_of_pixels_on_ring(pixel):
         x = pixel % d1 + ringidx[0]
@@ -1616,6 +1623,8 @@ def compute_W(Y, A, C, dims, radius, data_fits_in_memory=True, ssub=1, tsub=1):
 
         def process_pixel(p):
             index = get_indices_of_pixels_on_ring(p)
+            # marker
+            # print("index is: {0}".format(index))
             B = X[index]
             tmp = np.array(B.dot(B.T))
             tmp[np.diag_indices(len(tmp))] += np.trace(tmp) * 1e-5
@@ -1642,12 +1651,21 @@ def compute_W(Y, A, C, dims, radius, data_fits_in_memory=True, ssub=1, tsub=1):
                     ds(b0).reshape((-1, 1), order='F')[p]
             data = dpotrs(dpotrf(tmp)[0], B.dot(tmp2))[0]
             return index, data
+    # marker
+    print("dims is: {0}".format(dims))
+    print("dim1 is: {0}".format(d1))
+    print("dim2 is: {0}".format(d2))
 
     Q = list(map(process_pixel, range(d1 * d2)))
     indices, data = np.transpose(Q)
     indptr = np.concatenate([[0], np.cumsum(list(map(len, indices)))])
     indices = np.concatenate(indices)
     data = np.concatenate(data)
+    # marker
+    # print("Printing sparse matrix")
+    # print(spr.csr_matrix((data, indices, indptr), dtype='float32').toarray())
+    # print(indptr)
+    # print(len(indptr))
     return spr.csr_matrix((data, indices, indptr), dtype='float32'), b0.astype(np.float32)
 
 #%%
