@@ -46,6 +46,9 @@ try:
 except:
     pass
 
+# marker
+import config
+import mod
 
 
 def resize(Y, size, interpolation=cv2.INTER_LINEAR):
@@ -1593,11 +1596,25 @@ def compute_W(Y, A, C, dims, radius, data_fits_in_memory=True, ssub=1, tsub=1):
     ring = disk(radius + 1)
     ring[1:-1, 1:-1] -= disk(radius)
     # marker
-    print("ring is: {0}".format(ring))
-    print("ring size is: {0}".format(ring.shape))
+    # print("ring is: {0}".format(ring))
+    # print("ring size is: {0}".format(ring.shape))
     ringidx = [i - radius - 1 for i in np.nonzero(ring)]
-    print("ringidx is: {0}".format(ringidx))
-    print("ring size is: {0}".format(ringidx.shape))
+    
+
+
+    if len(config.ring_ref) == 0:
+        config.ring_ref.append(ringidx)
+    elif len(config.ring_ref[-1]) == len(ringidx):
+        for x,y in zip(config.ring_ref[-1],ringidx):
+            last = config.ring_ref[-1][-1]
+            if x is not y:
+                break
+            elif x is last and x is y:
+                config.same_ref.append(1)
+    else:
+        config.same_ref.append(0)
+    # print("ringidx is: {0}".format(ringidx))
+    # print("ringindx size is: {0}".format(np.array(ringidx).shape))
 
     def get_indices_of_pixels_on_ring(pixel):
         x = pixel % d1 + ringidx[0]
@@ -1652,9 +1669,9 @@ def compute_W(Y, A, C, dims, radius, data_fits_in_memory=True, ssub=1, tsub=1):
             data = dpotrs(dpotrf(tmp)[0], B.dot(tmp2))[0]
             return index, data
     # marker
-    print("dims is: {0}".format(dims))
-    print("dim1 is: {0}".format(d1))
-    print("dim2 is: {0}".format(d2))
+    # print("dims is: {0}".format(dims))
+    # print("dim1 is: {0}".format(d1))
+    # print("dim2 is: {0}".format(d2))
 
     Q = list(map(process_pixel, range(d1 * d2)))
     indices, data = np.transpose(Q)
