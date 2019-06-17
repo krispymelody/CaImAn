@@ -16,15 +16,7 @@ Demo is also available as a jupyter notebook (see demo_pipeline_cnmfE.ipynb)
 
 This version is forked by Kris Pan.
 """
-# marker
-# class compare_rings(object):
-#     @classmethod
-#     def ring_ref(cls, name_sl)
-
-import config
-config.ring_ref = []
-config.same_ref = []
-
+        
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
@@ -231,7 +223,6 @@ def main():
     print(' ***** ')
     print('Number of total components: ', len(cnm.estimates.C))
     print('Number of accepted components: ', len(cnm.estimates.idx_components))
-    print('Ring indexes are same or different : ', config.same_ref)
 
 # %% PLOT COMPONENTS
     cnm.dims = dims

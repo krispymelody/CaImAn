@@ -46,10 +46,6 @@ try:
 except:
     pass
 
-# marker
-import config
-import mod
-
 
 def resize(Y, size, interpolation=cv2.INTER_LINEAR):
     """faster and 3D compatible version of skimage.transform.resize"""
@@ -1595,24 +1591,13 @@ def compute_W(Y, A, C, dims, radius, data_fits_in_memory=True, ssub=1, tsub=1):
     radius = int(round(radius / float(ssub)))
     ring = disk(radius + 1)
     ring[1:-1, 1:-1] -= disk(radius)
+
     # marker
-    # print("ring is: {0}".format(ring))
+    print("ring is: {0}".format(ring))
     # print("ring size is: {0}".format(ring.shape))
+
     ringidx = [i - radius - 1 for i in np.nonzero(ring)]
     
-
-
-    if len(config.ring_ref) == 0:
-        config.ring_ref.append(ringidx)
-    elif len(config.ring_ref[-1]) == len(ringidx):
-        for x,y in zip(config.ring_ref[-1],ringidx):
-            last = config.ring_ref[-1][-1]
-            if x is not y:
-                break
-            elif x is last and x is y:
-                config.same_ref.append(1)
-    else:
-        config.same_ref.append(0)
     # print("ringidx is: {0}".format(ringidx))
     # print("ringindx size is: {0}".format(np.array(ringidx).shape))
 
@@ -1679,8 +1664,10 @@ def compute_W(Y, A, C, dims, radius, data_fits_in_memory=True, ssub=1, tsub=1):
     indices = np.concatenate(indices)
     data = np.concatenate(data)
     # marker
-    # print("Printing sparse matrix")
-    # print(spr.csr_matrix((data, indices, indptr), dtype='float32').toarray())
+    print("Printing sparse matrix")
+    d = spr.csr_matrix((data, indices, indptr), dtype='float32')
+    print(d.shape)
+    print(d.toarray().shape)
     # print(indptr)
     # print(len(indptr))
     return spr.csr_matrix((data, indices, indptr), dtype='float32'), b0.astype(np.float32)
